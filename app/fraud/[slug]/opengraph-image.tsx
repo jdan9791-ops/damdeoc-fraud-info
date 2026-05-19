@@ -1,99 +1,121 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { ImageResponse } from "next/og";
+import { supabase } from "@/lib/supabase";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
-// 서버 측 Supabase 클라이언트 (service_role 키 — 환경 변수에서만 사용)
-function serverClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-  if (!url || !key) return null;
-  return createClient(url, key, { auth: { persistSession: false } });
-}
+export const alt = "담덕법률사무소 사기 피해 정보 센터";
+export const size = { width: 1200, height: 630 };
+export const contentType = "image/png";
 
 /**
- * 간단한 referrer 분류 (구글/네이버/다음/직접/기타)
+ * 상세 페이지 동적 OG 이미지 — 트위터/페이스북/카카오톡 공유 카드용.
+ * 사건 제목 + 사이트 브랜드를 큰 글자로 렌더링.
  */
-function categorizeReferrer(ref: string | null): string {
-  if (!ref) return "direct";
+export default async function og({ params }: { params: { slug: string } }) {
+  const slug = decodeURIComponent(params.slug);
+  let title = slug.replace(/-/g, " ");
+  let createdAt = "";
   try {
-    const host = new URL(ref).hostname.toLowerCase();
-    if (host.includes("google.")) return "google";
-    if (host.includes("naver.")) return "naver";
-    if (host.includes("daum.") || host.includes("kakao.")) return "daum";
-    if (host.includes("bing.")) return "bing";
-    if (host.includes("yahoo.")) return "yahoo";
-    if (host.includes("damdeoc-fraud-info.vercel.app")) return "internal";
-    if (host.includes("vercel.app")) return "internal";
-    return host;
-  } catch {
-    return "unknown";
-  }
-}
-
-/**
- * IP를 단순 해시로 변환 (개인정보 보호)
- */
-function hashIp(ip: string): string {
-  let h = 0;
-  for (let i = 0; i < ip.length; i++) {
-    h = ((h << 5) - h) + ip.charCodeAt(i);
-    h |= 0;
-  }
-  return Math.abs(h).toString(36);
-}
-
-export async function POST(req: NextRequest) {
-  const client = serverClient();
-  if (!client) {
-    return NextResponse.json({ ok: false, error: "Supabase 환경 변수 없음" }, { status: 503 });
-  }
-
-  let body: { slug?: string; referrer?: string } = {};
-  try { body = await req.json(); } catch {}
-  const slug = (body.slug || "").trim();
-  if (!slug) {
-    return NextResponse.json({ ok: false, error: "slug 누락" }, { status: 400 });
-  }
-
-  // 봇/크롤러 차단 (간단)
-  const ua = req.headers.get("user-agent") || "";
-  const isBot = /bot|crawler|spider|crawling|axios|curl|wget|preview/i.test(ua);
-  if (isBot) {
-    return NextResponse.json({ ok: true, skipped: "bot" });
-  }
-
-  const ipRaw = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "";
-  const ipHash = ipRaw ? hashIp(ipRaw) : "anon";
-  const source = categorizeReferrer(body.referrer || req.headers.get("referer") || null);
-
-  // 1) 조회수 증가 — fraud_cases.view_count + 1
-  try {
-    // Supabase RPC: increment_view_count(p_slug TEXT)
-    const { error: rpcErr } = await client.rpc("increment_view_count", { p_slug: slug });
-    if (rpcErr) {
-      // RPC 실패 시 직접 UPDATE 폴백
-      const { data: row } = await client.from("fraud_cases").select("view_count").eq("slug", slug).single();
-      if (row) {
-        await client.from("fraud_cases").update({ view_count: (row.view_count || 0) + 1 }).eq("slug", slug);
+    if (supabase) {
+      const { data } = await supabase
+        .from("fraud_cases")
+        .select("title,created_at")
+        .eq("slug", slug)
+        .single();
+      if (data) {
+        title = data.title || title;
+        createdAt = (data.created_at || "").slice(0, 10);
       }
     }
-  } catch (e) {
-    // 조용히 실패 (조회수 증가 실패가 페이지 표시를 막으면 안 됨)
-  }
-
-  // 2) page_views INSERT (테이블 있으면)
-  try {
-    await client.from("page_views").insert({
-      slug,
-      source,
-      ip_hash: ipHash,
-      user_agent: ua.slice(0, 200),
-    });
   } catch {
-    // 테이블 없으면 무시
+    // fall through with slug
   }
 
-  return NextResponse.json({ ok: true });
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#800020",
+          color: "#fff",
+          padding: "70px 80px",
+          fontFamily: "sans-serif",
+        }}
+      >
+        {/* 상단 — 브랜드 */}
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 40 }}>
+          <div
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 12,
+              background: "#fff",
+              color: "#800020",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 32,
+              fontWeight: 700,
+            }}
+          >
+            D
+          </div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", fontSize: 28, fontWeight: 700 }}>담덕법률사무소</div>
+            <div style={{ display: "flex", fontSize: 16, opacity: 0.7, marginTop: 4, letterSpacing: 2 }}>
+              DAMDEOC LAW OFFICE
+            </div>
+          </div>
+        </div>
+
+        {/* 메인 — 사건 제목 */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <div style={{ display: "flex", fontSize: 22, opacity: 0.7, marginBottom: 20 }}>
+            최신 사기 사건
+          </div>
+          <div
+            style={{
+              display: "flex",
+              fontSize: title.length > 60 ? 48 : title.length > 40 ? 56 : 64,
+              fontWeight: 700,
+              lineHeight: 1.2,
+              letterSpacing: -1.5,
+              wordBreak: "keep-all",
+            }}
+          >
+            {title.length > 120 ? title.slice(0, 120) + "…" : title}
+          </div>
+        </div>
+
+        {/* 하단 — 메타 + URL */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            borderTop: "2px solid rgba(255,255,255,0.2)",
+            paddingTop: 24,
+            fontSize: 18,
+          }}
+        >
+          <div style={{ display: "flex", opacity: 0.85 }}>
+            사기 피해 정보 · 24시 직통 010-2263-9674
+          </div>
+          <div style={{ display: "flex", opacity: 0.6 }}>{createdAt}</div>
+        </div>
+      </div>
+    ),
+    { ...size },
+  );
 }
