@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 export const revalidate = 3600;
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-fraud-info.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
 
 /**
  * llms.txt — AI 검색엔진(ChatGPT, Claude, Gemini, Perplexity 등)을 위한

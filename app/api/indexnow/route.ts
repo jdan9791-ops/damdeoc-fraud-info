@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   }
 
   const SITE_URL =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-fraud-info.vercel.app";
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
 
   // urls 우선, 없으면 slugs로 URL 조립
   const urls = Array.isArray(body.urls) && body.urls.length > 0

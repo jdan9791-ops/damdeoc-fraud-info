@@ -18,7 +18,7 @@ import {
 export const revalidate = 60;
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-fraud-info.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
 
 async function getCases(): Promise<FraudCase[]> {
   if (!supabase) return [];

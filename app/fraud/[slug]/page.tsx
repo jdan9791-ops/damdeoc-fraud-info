@@ -36,7 +36,7 @@ export async function generateMetadata({
   const c = await getCase(slug);
   if (!c) return { title: "사건을 찾을 수 없습니다" };
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-fraud-info.vercel.app";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
   const pageUrl = `${SITE_URL}/fraud/${slug}`;
 
   // ── 사건 제목을 키워드 검색에 직접 노출되도록 제목·설명 최적화 ──
@@ -174,7 +174,7 @@ export default async function FraudDetailPage({
     .filter(Boolean);
 
   // ─── 구조화 데이터 (JSON-LD) ─────────────────────────────────────────
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-fraud-info.vercel.app";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
   const pageUrl = `${SITE_URL}/fraud/${slug}`;
 
   const summary =

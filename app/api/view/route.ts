@@ -24,7 +24,7 @@ function categorizeReferrer(ref: string | null): string {
     if (host.includes("daum.") || host.includes("kakao.")) return "daum";
     if (host.includes("bing.")) return "bing";
     if (host.includes("yahoo.")) return "yahoo";
-    if (host.includes("damdeoc-fraud-info.vercel.app")) return "internal";
+    if (host.includes("damdeoc-cases.vercel.app")) return "internal";
     if (host.includes("vercel.app")) return "internal";
     return host;
   } catch {
