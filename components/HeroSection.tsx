@@ -1,14 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import BlurTextHero from "@/components/BlurTextHero";
-import dynamic from "next/dynamic";
-
-// 차트는 무거운 캔버스 컴포넌트 — SSR 제외 + 첫 페인트 후 lazy 로드 (LCP 개선)
-const TradingChart = dynamic(() => import("@/components/TradingChart"), {
-  ssr: false,
-  loading: () => null,
-});
 
 export default function HeroSection({ caseCount }: { caseCount: number }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -25,64 +19,62 @@ export default function HeroSection({ caseCount }: { caseCount: number }) {
   ];
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden">
-      {/* ─── 히어로 영역 배경 — 코인/주식 거래소 차트 ─────────────────── */}
-      <div className="absolute inset-0 -z-0 pointer-events-none overflow-hidden">
-        <TradingChart opacity={0.55} speed={1100} />
-        {/* 데스크탑 — 좌→우 (왼쪽 글자, 오른쪽 글리치) */}
+    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-black">
+      {/* ─── 히어로 배경 이미지 ──────────────────────────────────────────── */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <Image
+          src="/hero-bg.png"
+          alt=""
+          fill
+          priority
+          className="object-cover object-right opacity-80"
+          sizes="100vw"
+        />
+        {/* PC: 좌→우 그라데이션 (왼쪽 텍스트 가독성 확보) */}
         <div
-          className="absolute inset-0 pointer-events-none hidden lg:block"
+          className="absolute inset-0 hidden lg:block"
           style={{
             background:
-              "linear-gradient(90deg, " +
-              "rgba(250,250,248,0.95) 0%, " +
-              "rgba(250,250,248,0.92) 30%, " +
-              "rgba(250,250,248,0.80) 50%, " +
-              "rgba(250,250,248,0.58) 75%, " +
-              "rgba(250,250,248,0.35) 100%)",
+              "linear-gradient(90deg," +
+              "rgba(0,0,0,0.92) 0%," +
+              "rgba(0,0,0,0.80) 30%," +
+              "rgba(0,0,0,0.55) 55%," +
+              "rgba(0,0,0,0.20) 80%," +
+              "rgba(0,0,0,0.05) 100%)",
           }}
         />
-        {/* 데스크탑 — 위→아래 미세 페이드 (하단 글리치 거의 안 보이도록 추가 톤다운) */}
+        {/* 모바일: 전체 어둡게 */}
         <div
-          className="absolute inset-0 pointer-events-none hidden lg:block"
-          style={{
-            background:
-              "linear-gradient(180deg, " +
-              "rgba(250,250,248,0.25) 0%, " +
-              "rgba(250,250,248,0.30) 40%, " +
-              "rgba(250,250,248,0.50) 70%, " +
-              "rgba(250,250,248,0.80) 100%)",
-          }}
+          className="absolute inset-0 lg:hidden"
+          style={{ background: "rgba(0,0,0,0.70)" }}
         />
-        {/* 모바일 — 하단도 거의 화이트 (글리치 매우 은은하게만 비침) */}
+        {/* 상→하 페이드 (상단 헤더, 하단 마퀴 가독성) */}
         <div
-          className="absolute inset-0 pointer-events-none lg:hidden"
+          className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, " +
-              "rgba(250,250,248,0.98) 0%, " +
-              "rgba(250,250,248,0.95) 30%, " +
-              "rgba(250,250,248,0.90) 55%, " +
-              "rgba(250,250,248,0.82) 80%, " +
-              "rgba(250,250,248,0.78) 100%)",
+              "linear-gradient(180deg," +
+              "rgba(0,0,0,0.30) 0%," +
+              "transparent 25%," +
+              "transparent 70%," +
+              "rgba(0,0,0,0.55) 100%)",
           }}
         />
       </div>
 
-
       {/* 그리드 라인 */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-25">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20 z-[1]">
         {[...Array(8)].map((_, i) => (
           <div
             key={`h-${i}`}
-            className="absolute h-px bg-foreground/10"
+            className="absolute h-px bg-white/10"
             style={{ top: `${12.5 * (i + 1)}%`, left: 0, right: 0 }}
           />
         ))}
         {[...Array(12)].map((_, i) => (
           <div
             key={`v-${i}`}
-            className="absolute w-px bg-foreground/10"
+            className="absolute w-px bg-white/10"
             style={{ left: `${8.33 * (i + 1)}%`, top: 0, bottom: 0 }}
           />
         ))}
@@ -98,12 +90,11 @@ export default function HeroSection({ caseCount }: { caseCount: number }) {
           <BlurTextHero />
         </div>
 
-        {/* 설명 + CTA — 모바일: 가운데 정렬 / PC: 좌측 정렬 그리드 */}
+        {/* 설명 + CTA */}
         <div className="flex flex-col items-center lg:items-stretch gap-8 lg:gap-10">
-          {/* PC: 2컬럼 그리드, 모바일: 가운데 정렬 스택 */}
           <div className="lg:grid lg:grid-cols-2 lg:gap-24 lg:items-end w-full">
             <p
-              className={`text-muted-foreground leading-relaxed text-center lg:text-left max-w-2xl lg:max-w-xl transition-all duration-700 delay-200 text-base lg:text-xl ${
+              className={`text-white/70 leading-relaxed text-center lg:text-left max-w-2xl lg:max-w-xl transition-all duration-700 delay-200 text-base lg:text-xl ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               }`}
             >
@@ -116,14 +107,14 @@ export default function HeroSection({ caseCount }: { caseCount: number }) {
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               }`}
             >
-              {/* 직통 상담 — 모바일 크게 강조 / PC 원래 크기 */}
+              {/* 직통 상담 */}
               <a
                 href="tel:010-2263-9674"
-                className="group flex items-center justify-center lg:justify-start px-8 lg:px-7 py-6 lg:py-4 rounded-2xl transition-transform hover:scale-[1.02] text-white shadow-lg lg:shadow-none"
+                className="group flex items-center justify-center lg:justify-start px-8 lg:px-7 py-6 lg:py-4 rounded-2xl transition-transform hover:scale-[1.02] text-white shadow-lg"
                 style={{ backgroundColor: "#800020" }}
               >
                 <div className="flex flex-col items-center sm:items-start leading-tight w-full">
-                  <span className="font-sans text-center sm:text-left opacity-80 lg:opacity-70 text-[14px] lg:text-[12px] mb-1.5 lg:mb-0">
+                  <span className="font-sans text-center sm:text-left opacity-75 text-[14px] lg:text-[12px] mb-1.5 lg:mb-0">
                     직통 상담 · 법무팀 조팀장
                   </span>
                   <span className="font-bold font-mono tracking-tight text-[28px] lg:text-[16px] lg:font-medium lg:font-sans">
@@ -135,14 +126,14 @@ export default function HeroSection({ caseCount }: { caseCount: number }) {
               {/* 피해 제보 */}
               <a
                 href="#report"
-                className="group flex items-center justify-center lg:justify-start border border-foreground/20 hover:bg-white/50 px-8 lg:px-7 py-6 lg:py-4 rounded-2xl transition-colors backdrop-blur-sm"
-                style={{ backgroundColor: "rgba(255,255,255,0.3)" }}
+                className="group flex items-center justify-center lg:justify-start border border-white/20 hover:bg-white/10 px-8 lg:px-7 py-6 lg:py-4 rounded-2xl transition-colors backdrop-blur-sm"
+                style={{ backgroundColor: "rgba(255,255,255,0.07)" }}
               >
                 <div className="flex flex-col items-center sm:items-start leading-tight w-full">
-                  <span className="font-sans text-center sm:text-left text-muted-foreground text-[14px] lg:text-[12px] mb-1.5 lg:mb-0">
+                  <span className="font-sans text-center sm:text-left text-white/50 text-[14px] lg:text-[12px] mb-1.5 lg:mb-0">
                     지금 즉시 접수
                   </span>
-                  <span className="font-bold lg:font-medium text-[20px] lg:text-[15px]">
+                  <span className="font-bold lg:font-medium text-white text-[20px] lg:text-[15px]">
                     내가 당한 사기사건 제보 하기
                   </span>
                 </div>
@@ -163,10 +154,10 @@ export default function HeroSection({ caseCount }: { caseCount: number }) {
             <div key={i} className="flex gap-8 lg:gap-16">
               {stats.map((stat) => (
                 <div key={`${stat.company}-${i}`} className="flex items-baseline gap-2 lg:gap-4">
-                  <span className="text-2xl lg:text-5xl font-display" style={{ color: "#800020" }}>{stat.value}</span>
-                  <span className="text-xs lg:text-sm text-muted-foreground">
+                  <span className="text-2xl lg:text-5xl font-display" style={{ color: "#c8385a" }}>{stat.value}</span>
+                  <span className="text-xs lg:text-sm text-white/50">
                     {stat.label}
-                    <span className="block font-mono text-[10px] lg:text-xs mt-0.5 lg:mt-1">{stat.company}</span>
+                    <span className="block font-mono text-[10px] lg:text-xs mt-0.5 lg:mt-1 text-white/35">{stat.company}</span>
                   </span>
                 </div>
               ))}

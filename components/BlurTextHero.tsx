@@ -24,13 +24,13 @@ export default function BlurTextHero() {
   return (
     <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
       {/* 고정 1줄 */}
-      <div className={`${common} ${size} text-foreground`}>
+      <div className={`${common} ${size} text-white`}>
         현재 피해를 입었다면
       </div>
 
       {/* 고정 "지금" + 롤링 단어 — 모바일 가운데 / PC 좌측 */}
       <div className={`${common} ${size} flex items-baseline justify-center lg:justify-start`}>
-        <span className="mr-[0.2em]">지금</span>
+        <span className="mr-[0.2em] text-white">지금</span>
 
         {/* 롤링 컨테이너 — 슬라이드 클리핑은 세로만 (가로는 visible) */}
         <div
@@ -40,8 +40,8 @@ export default function BlurTextHero() {
           <AnimatePresence mode="wait">
             <motion.span
               key={index}
-              className="block border-b-[5px] lg:border-b-[10px] border-foreground/20 pr-2"
-              style={{ color: "#800020" }}
+              className="block border-b-[5px] lg:border-b-[10px] border-white/20 pr-2"
+              style={{ color: "#e05577" }}
               initial={{ y: "110%" }}
               animate={{ y: 0 }}
               exit={{ y: "-110%" }}
@@ -60,7 +60,7 @@ export default function BlurTextHero() {
             key={i}
             onClick={() => setIndex(i)}
             className={`h-0.5 rounded-full transition-all duration-500 ${
-              i === index ? "w-8 bg-foreground" : "w-2 bg-foreground/20"
+              i === index ? "w-8 bg-white" : "w-2 bg-white/25"
             }`}
             aria-label={`${WORDS[i]} 보기`}
           />
