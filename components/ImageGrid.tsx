@@ -3,8 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
-/** workers.dev 직접 요청 → Next.js 이미지 최적화 프록시로 라우팅 (rate limit 우회) */
-function imgProxy(url: string, width = 800, quality = 85): string {
+/** workers.dev 직접 요청 → Next.js 이미지 최적화 프록시로 라우팅 (rate limit 우회)
+ *  width는 반드시 next.config의 deviceSizes/imageSizes 중 하나여야 함
+ *  deviceSizes: 640, 750, 828, 1080, 1200, 1920
+ *  imageSizes: 16, 32, 48, 64, 96, 128, 256, 384
+ */
+function imgProxy(url: string, width = 828, quality = 85): string {
   if (!url) return url;
   return `/_next/image?url=${encodeURIComponent(url)}&w=${width}&q=${quality}`;
 }
@@ -255,7 +259,7 @@ export default function ImageGrid({ images }: { images: string[] }) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             key={`zoom-${zoomIndex}`}
-            src={imgProxy(images[zoomIndex], 1920, 90)}
+            src={imgProxy(images[zoomIndex], 1920, 85)}
             alt={`사건 사진 ${zoomIndex + 1}`}
             className="w-full h-auto block select-none animate-fade-in"
             draggable={false}
@@ -306,7 +310,7 @@ export default function ImageGrid({ images }: { images: string[] }) {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={imgProxy(src, 800, 85)}
+                    src={imgProxy(src, 828, 85)}
                     alt={`사건 사진 ${realIdx + 1}`}
                     className="w-full h-auto block rounded-md"
                     loading="lazy"
