@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
  *  deviceSizes: 640, 750, 828, 1080, 1200, 1920
  *  imageSizes: 16, 32, 48, 64, 96, 128, 256, 384
  */
-function imgProxy(url: string, width = 828, quality = 85): string {
+function imgProxy(url: string, width = 828, quality = 75): string {
   if (!url) return url;
   return `/_next/image?url=${encodeURIComponent(url)}&w=${width}&q=${quality}`;
 }
@@ -259,7 +259,7 @@ export default function ImageGrid({ images }: { images: string[] }) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             key={`zoom-${zoomIndex}`}
-            src={imgProxy(images[zoomIndex], 1920, 85)}
+            src={imgProxy(images[zoomIndex], 1920, 75)}
             alt={`사건 사진 ${zoomIndex + 1}`}
             className="w-full h-auto block select-none animate-fade-in"
             draggable={false}
@@ -310,7 +310,7 @@ export default function ImageGrid({ images }: { images: string[] }) {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={imgProxy(src, 828, 85)}
+                    src={imgProxy(src, 828, 75)}
                     alt={`사건 사진 ${realIdx + 1}`}
                     className="w-full h-auto block rounded-md"
                     loading="lazy"
