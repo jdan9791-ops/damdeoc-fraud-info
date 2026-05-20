@@ -3,6 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
+/** workers.dev 직접 요청 → Next.js 이미지 최적화 프록시로 라우팅 (rate limit 우회) */
+function imgProxy(url: string, width = 800, quality = 85): string {
+  if (!url) return url;
+  return `/_next/image?url=${encodeURIComponent(url)}&w=${width}&q=${quality}`;
+}
+
 export default function ImageGrid({ images }: { images: string[] }) {
   const [zoomIndex, setZoomIndex] = useState<number | null>(null);
   const [hoverPaused, setHoverPaused] = useState(false);
@@ -249,7 +255,7 @@ export default function ImageGrid({ images }: { images: string[] }) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             key={`zoom-${zoomIndex}`}
-            src={images[zoomIndex]}
+            src={imgProxy(images[zoomIndex], 1920, 90)}
             alt={`사건 사진 ${zoomIndex + 1}`}
             className="w-full h-auto block select-none animate-fade-in"
             draggable={false}
@@ -300,7 +306,7 @@ export default function ImageGrid({ images }: { images: string[] }) {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={src}
+                    src={imgProxy(src, 800, 85)}
                     alt={`사건 사진 ${realIdx + 1}`}
                     className="w-full h-auto block rounded-md"
                     loading="lazy"
