@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.supabase.co" },
       { protocol: "https", hostname: "**.supabase.in" },
       { protocol: "https", hostname: "**.r2.dev" },
+      { protocol: "https", hostname: "**.workers.dev" },
     ],
     // 최신 포맷 자동 변환 (브라우저 지원 시)
     formats: ["image/avif", "image/webp"],
