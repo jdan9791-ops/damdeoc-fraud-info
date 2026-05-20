@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 export const revalidate = 3600;
@@ -17,6 +17,7 @@ export default async function og({ params }: { params: { slug: string } }) {
   let title = slug.replace(/-/g, " ");
   let createdAt = "";
   try {
+    const supabase = getSupabase();
     if (supabase) {
       const { data } = await supabase
         .from("fraud_cases")

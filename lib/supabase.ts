@@ -1,28 +1,30 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// URL: 비공개 서버 전용 키 → NEXT_PUBLIC fallback → 하드코딩
-const supabaseUrl =
-  process.env.SUPABASE_URL ||
-  process.env.NEXT_PUBLIC_SUPABASE_URL ||
-  "https://yrikowwhflyjafsjeomy.supabase.co";
+const SUPABASE_URL_FALLBACK = "https://yrikowwhflyjafsjeomy.supabase.co";
 
-// KEY: service_role(서버 전용, 안전) → anon 순으로 폴백
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  "";
+/**
+ * ISR-safe factory: env 변수를 호출 시점에 읽음.
+ * 모듈 로드 시점(빌드) 에 key가 없어도 런타임 ISR 재렌더에서 정상 작동.
+ */
+export function getSupabase(): SupabaseClient | null {
+  const url =
+    process.env.SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    SUPABASE_URL_FALLBACK;
 
-let _supabase: SupabaseClient | null = null;
+  const key =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    "";
 
-try {
-  if (supabaseUrl.startsWith("http") && supabaseKey) {
-    _supabase = createClient(supabaseUrl, supabaseKey);
+  if (!url.startsWith("http") || !key) return null;
+
+  try {
+    return createClient(url, key);
+  } catch {
+    return null;
   }
-} catch {
-  _supabase = null;
 }
-
-export const supabase = _supabase;
 
 export type FraudCase = {
   id: number;

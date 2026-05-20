@@ -1,5 +1,5 @@
 ﻿import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 export const revalidate = 3600;
@@ -44,6 +44,7 @@ export async function GET() {
 
   let cases: Row[] = [];
   try {
+    const supabase = getSupabase();
     if (supabase) {
       const { data } = await supabase
         .from("fraud_cases")

@@ -1,4 +1,4 @@
-﻿import { supabase, type FraudCase } from "@/lib/supabase";
+﻿import { getSupabase, type FraudCase } from "@/lib/supabase";
 import dynamic from "next/dynamic";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
@@ -21,6 +21,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
 
 async function getCases(): Promise<FraudCase[]> {
+  const supabase = getSupabase();
   if (!supabase) return [];
   // limit 5000 — Supabase 기본 1000 한도 우회 (range 사용 시 더 큰 값 가능)
   const { data } = await supabase
@@ -32,6 +33,7 @@ async function getCases(): Promise<FraudCase[]> {
 }
 
 async function getCaseCount(): Promise<number> {
+  const supabase = getSupabase();
   if (!supabase) return 0;
   const { count } = await supabase
     .from("fraud_cases")

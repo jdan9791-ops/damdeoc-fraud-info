@@ -1,5 +1,5 @@
 ﻿import type { MetadataRoute } from "next";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 export const revalidate = 3600;
 
@@ -17,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   };
   let rows: Row[] = [];
   try {
+    const supabase = getSupabase();
     if (supabase) {
       const { data } = await supabase
         .from("fraud_cases")

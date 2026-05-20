@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { supabase, type FraudCase } from "@/lib/supabase";
+import { getSupabase, type FraudCase } from "@/lib/supabase";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ImageGrid from "@/components/ImageGrid";
@@ -17,6 +17,7 @@ const ReportSection = dynamic(() => import("@/components/ReportSection"));
 export const revalidate = 3600;
 
 async function getCase(slug: string): Promise<FraudCase | null> {
+  const supabase = getSupabase();
   if (!supabase) return null;
   const { data } = await supabase
     .from("fraud_cases")

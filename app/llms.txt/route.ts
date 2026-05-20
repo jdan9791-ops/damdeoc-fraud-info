@@ -1,5 +1,5 @@
 ﻿import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 export const revalidate = 3600;
@@ -21,6 +21,7 @@ export async function GET() {
   // 최근 사건 80건 (AI가 인용·참조할 사례 풀)
   let cases: { slug: string; title: string; created_at: string }[] = [];
   try {
+    const supabase = getSupabase();
     if (supabase) {
       const { data } = await supabase
         .from("fraud_cases")
