@@ -61,10 +61,10 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
   };
 
   const pageNums = useMemo(() => {
-    if (totalPages <= 5) return Array.from({ length: totalPages }, (_, i) => i + 1);
-    if (page <= 3) return [1, 2, 3, 4, 5];
-    if (page >= totalPages - 2) return Array.from({ length: 5 }, (_, i) => totalPages - 4 + i);
-    return [page - 2, page - 1, page, page + 1, page + 2];
+    if (totalPages <= 10) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    if (page <= 5) return Array.from({ length: 10 }, (_, i) => i + 1);
+    if (page >= totalPages - 4) return Array.from({ length: 10 }, (_, i) => totalPages - 9 + i);
+    return Array.from({ length: 10 }, (_, i) => page - 4 + i);
   }, [totalPages, page]);
 
   const displayTotal = totalCount ?? cases.length;
