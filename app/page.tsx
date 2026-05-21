@@ -1,5 +1,6 @@
 ﻿import { getSupabase, type FraudCase } from "@/lib/supabase";
 import dynamic from "next/dynamic";
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import CasesTable from "@/components/CasesTable";
@@ -19,6 +20,14 @@ export const revalidate = 60;
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
+
+// 홈페이지 canonical 명시 (layout에서 제거됐으므로 여기서 직접 설정)
+export const metadata: Metadata = {
+  alternates: {
+    canonical: SITE_URL,
+    languages: { "ko-KR": SITE_URL },
+  },
+};
 
 async function getCases(): Promise<FraudCase[]> {
   const supabase = getSupabase();

@@ -76,7 +76,8 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   alternates: {
-    canonical: SITE_URL,
+    // canonical은 각 페이지에서 개별 설정 — 여기서 전역 설정 시 모든 하위 페이지가 홈으로 덮여 색인 오류 발생
+    // canonical: SITE_URL,
     languages: { "ko-KR": SITE_URL },
   },
   robots: {

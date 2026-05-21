@@ -34,11 +34,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
-  const c = await getCase(slug);
-  if (!c) return { title: "사건을 찾을 수 없습니다" };
-
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
   const pageUrl = `${SITE_URL}/fraud/${slug}`;
+  const c = await getCase(slug);
+  if (!c) return {
+    title: "사건을 찾을 수 없습니다",
+    alternates: { canonical: pageUrl },
+  };
 
   // ── 사건 제목을 키워드 검색에 직접 노출되도록 제목·설명 최적화 ──
   const baseTitle = c.meta_title || c.title;
