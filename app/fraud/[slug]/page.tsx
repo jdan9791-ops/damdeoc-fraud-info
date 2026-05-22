@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { getSupabase, type FraudCase } from "@/lib/supabase";
@@ -152,6 +152,23 @@ export default async function FraudDetailPage({
   // 슬라이더에는 번호 이미지(1.jpg, 2.jpg ...)만 표시 — 썸네일은 목록/OG용으로만 사용
   const allImages: string[] = caseData.image_urls ?? [];
 
+  // 이미지별 SEO alt 텍스트 — 사건 키워드 조합으로 구글 이미지 검색 노출 강화
+  const _caseKeywords = (caseData.keywords ?? []).slice(0, 6);
+  const _altSuffixes = [
+    "피해 증거",
+    "출금차단 스크린샷",
+    "피해 사례",
+    "사기 수법 증거",
+    "관련 자료",
+    "피해 화면",
+    "사기 증거 자료",
+  ];
+  const imageAlts = allImages.map((_, i) => {
+    const kwStr = _caseKeywords.join(" ");
+    const suffix = _altSuffixes[i % _altSuffixes.length];
+    return `${kwStr} ${suffix} 담덕법률사무소`.trim();
+  });
+
   // 본문에서 #해시태그 추출 — 한글/영문/숫자/.(점)/_(언더스코어) 허용
   const bodyHashtagMatches = caseData.body.match(/#[a-zA-Z0-9가-힣._]+/g) ?? [];
   const bodyHashtags = Array.from(new Set(bodyHashtagMatches.map((h) => h.slice(1))));
@@ -237,8 +254,9 @@ export default async function FraudDetailPage({
           "@type": "ImageObject",
           contentUrl: url,
           url,
-          name: `${caseData.title} - 사건 사진 ${i + 1}`,
-          caption: `${caseData.title} 관련 자료 사진 ${i + 1}`,
+          name: imageAlts[i] ?? `${caseData.title} - 사건 사진 ${i + 1}`,
+          caption: imageAlts[i] ?? `${caseData.title} 관련 자료 사진 ${i + 1}`,
+          description: `${caseData.title} ${(caseData.keywords ?? []).slice(0, 4).join(" ")} 담덕법률사무소`,
         }))
       : [];
 
@@ -303,7 +321,7 @@ export default async function FraudDetailPage({
 
               {/* 모바일: 이미지 슬라이더 */}
               <div className="lg:hidden mb-12 -mx-6">
-                <ImageGrid images={allImages} />
+                <ImageGrid images={allImages} imageAlts={imageAlts} />
               </div>
 
               {/* 글 제목 */}
@@ -375,7 +393,7 @@ export default async function FraudDetailPage({
             {/* ── RIGHT — 이미지 슬라이더 + 사이드 CTA (PC sticky) */}
             <div className="hidden lg:flex flex-col gap-8 w-[40%] sticky top-28">
               <div className="pt-10">
-                <ImageGrid images={allImages} />
+                <ImageGrid images={allImages} imageAlts={imageAlts} />
               </div>
 
               <div className="border border-foreground p-8 text-center" style={{ borderRadius: "35px" }}>

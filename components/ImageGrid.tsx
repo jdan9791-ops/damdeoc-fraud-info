@@ -13,7 +13,7 @@ function imgProxy(url: string, width = 828, quality = 75): string {
   return `/_next/image?url=${encodeURIComponent(url)}&w=${width}&q=${quality}`;
 }
 
-export default function ImageGrid({ images }: { images: string[] }) {
+export default function ImageGrid({ images, imageAlts }: { images: string[]; imageAlts?: string[] }) {
   const [zoomIndex, setZoomIndex] = useState<number | null>(null);
   const [hoverPaused, setHoverPaused] = useState(false);
   const [userPaused, setUserPaused] = useState(false);
@@ -260,7 +260,7 @@ export default function ImageGrid({ images }: { images: string[] }) {
           <img
             key={`zoom-${zoomIndex}`}
             src={imgProxy(images[zoomIndex], 1920, 75)}
-            alt={`사건 사진 ${zoomIndex + 1}`}
+            alt={imageAlts?.[zoomIndex] ?? `사건 사진 ${zoomIndex + 1}`}
             className="w-full h-auto block select-none animate-fade-in"
             draggable={false}
           />
@@ -311,7 +311,7 @@ export default function ImageGrid({ images }: { images: string[] }) {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={imgProxy(src, 828, 75)}
-                    alt={`사건 사진 ${realIdx + 1}`}
+                    alt={imageAlts?.[realIdx] ?? `사건 사진 ${realIdx + 1}`}
                     className="w-full h-auto block rounded-md"
                     loading="lazy"
                     draggable={false}
