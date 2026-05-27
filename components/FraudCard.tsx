@@ -46,9 +46,8 @@ export default function FraudCard({ c }: { c: FraudCase }) {
             {c.title}
           </h2>
           <div className="divider-editorial mb-3" />
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <span className="label-editorial text-muted-foreground">{timeAgo(c.created_at)}</span>
-            <span className="label-editorial text-muted-foreground">조회 {c.view_count.toLocaleString()}</span>
           </div>
         </div>
       </article>

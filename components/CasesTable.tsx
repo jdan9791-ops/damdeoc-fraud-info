@@ -151,12 +151,6 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
           >
             등록일 <SortIcon active={sortKey === "created_at"} dir={sortDir} />
           </button>
-          <button
-            onClick={() => handleSort("view_count")}
-            className="inline-flex items-center justify-center gap-1.5 font-semibold hover:text-[#df0038] transition-colors w-16"
-          >
-            조회수 <SortIcon active={sortKey === "view_count"} dir={sortDir} />
-          </button>
         </div>
 
         {/* 리스트 */}
@@ -232,7 +226,7 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
                         <span className="case-badge-dot" />
                         사건진행중
                       </span>
-                      {new Date(c.created_at).toISOString().slice(0, 10)} · 조회 {c.view_count.toLocaleString()}
+                      {new Date(c.created_at).toISOString().slice(0, 10)}
                     </p>
                   </div>
 
@@ -261,10 +255,6 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
                     {new Date(c.created_at).toISOString().slice(0, 10)}
                   </span>
 
-                  {/* 조회수 (PC) — 가운데 정렬 */}
-                  <span className="hidden md:flex w-16 items-center justify-center text-xs font-mono text-gray-500 tabular-nums">
-                    {c.view_count.toLocaleString()}
-                  </span>
                 </Link>
               );
             })

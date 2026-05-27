@@ -361,8 +361,6 @@ export default async function FraudDetailPage({
               {/* 작성일 · 조회수 */}
               <div className="flex items-center gap-4 text-sm font-mono text-muted-foreground mt-10 pt-6 border-t border-foreground/10">
                 <span>{new Date(caseData.created_at).toLocaleDateString("ko-KR")}</span>
-                <span className="w-px h-3 bg-foreground/20" />
-                <span>조회 {caseData.view_count.toLocaleString()}</span>
               </div>
 
               <div className="my-16 h-px bg-foreground/10" />
