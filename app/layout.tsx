@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import PhoneClickTracker from "@/components/PhoneClickTracker";
 
 const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
@@ -352,7 +353,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(lawyerJsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <PhoneClickTracker />
+        {children}
+      </body>
     </html>
   );
 }
