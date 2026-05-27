@@ -57,10 +57,20 @@ export async function POST(req: NextRequest) {
     req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "";
   const ipHash = ipRaw ? hashIp(ipRaw) : "anon";
 
+  // 사이트 식별 — 호스트네임에서 추출 (예: damdeoc-alert.vercel.app → alert)
+  const host = (req.headers.get("host") || "").toLowerCase();
+  let siteId = "main";
+  if (host.includes("damdeoc-fraud-cases")) siteId = "fraud-cases";
+  else if (host.includes("damdeoc-alert")) siteId = "alert";
+  else if (host.includes("damdeoc-guard")) siteId = "guard";
+  else if (host.includes("damdeoc-check")) siteId = "check";
+  else if (host.includes("damdeoc-radar")) siteId = "radar";
+  else if (host.includes("damdeoc-cases")) siteId = "cases";
+
   try {
     await client.from("page_views").insert({
       slug,
-      source: "phone_click",
+      source: `phone_click:${siteId}`,
       ip_hash: ipHash,
       user_agent: ua.slice(0, 200),
     });
