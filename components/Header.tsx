@@ -44,7 +44,7 @@ export default function Header() {
               className="text-muted-foreground text-left font-sans"
               style={{ fontSize: "12px" }}
             >
-              사기 피해 정보 공개 플랫폼
+              사기 사례 데이터베이스
             </span>
           </Link>
 
