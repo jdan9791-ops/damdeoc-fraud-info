@@ -19,7 +19,7 @@ import {
 export const revalidate = 60;
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
 
 // 홈페이지 canonical 명시 (layout에서 제거됐으므로 여기서 직접 설정)
 export const metadata: Metadata = {

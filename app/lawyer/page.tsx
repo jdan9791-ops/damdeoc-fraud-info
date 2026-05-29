@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { Phone, ShieldCheck, Award, Clock, Building2, Scale, ChevronRight } from "lucide-react";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
 
 export const metadata: Metadata = {
   title: "사기 피해 변호사 — 담덕법률사무소 (코인·주식·투자·보이스피싱 전담)",

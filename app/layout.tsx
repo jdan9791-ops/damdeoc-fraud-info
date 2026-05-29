@@ -21,7 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
 const SITE_NAME = "담덕 사기 사례 데이터베이스";
 const SITE_DESC =
   "투자사기·보이스피싱·로맨스사기·코인사기 등 실제 사기 사건 정보와 대응 방법을 제공합니다. 담덕법률사무소 법무팀이 운영하는 사기 피해 정보 공개 플랫폼.";

@@ -14,7 +14,7 @@ const INDEXNOW_KEY = "damdeok-indexnow-167700f328544cf6";
 
 function siteHost(): string {
   const raw =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
   return raw.replace(/^https?:\/\//, "").replace(/\/$/, "");
 }
 

@@ -34,7 +34,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
   const pageUrl = `${SITE_URL}/fraud/${slug}`;
   const c = await getCase(slug);
   if (!c) return {
@@ -194,7 +194,7 @@ export default async function FraudDetailPage({
     .filter(Boolean);
 
   // ─── 구조화 데이터 (JSON-LD) ─────────────────────────────────────────
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
   const pageUrl = `${SITE_URL}/fraud/${slug}`;
 
   const summary =

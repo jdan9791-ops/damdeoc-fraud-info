@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 export const revalidate = 3600;
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
 const SITE_NAME = "담덕 사기 사례 데이터베이스";
 const SITE_DESC =
   "투자사기·보이스피싱·로맨스사기·코인사기 등 실제 사기 사건 정보와 대응 방법을 제공합니다.";

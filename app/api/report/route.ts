@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "jdan9791@gmail.com";
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
 
 function serverClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";

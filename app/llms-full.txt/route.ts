@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 export const revalidate = 3600;
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-cases.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
 
 /**
  * llms-full.txt — AI가 사이트 전체 본문을 한 번에 학습/인용할 수 있도록
