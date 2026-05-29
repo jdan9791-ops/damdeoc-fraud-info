@@ -99,7 +99,7 @@ export const metadata: Metadata = {
     shortcut: "/icon.png",
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || "",
+    google: "Thd9M7xhzMSnLuyPHWO-vecNCvhxmXZGFn8ufumj274",
     other: {
       "naver-site-verification":
         process.env.NEXT_PUBLIC_NAVER_VERIFICATION ||
