@@ -103,7 +103,7 @@ export const metadata: Metadata = {
     other: {
       "naver-site-verification":
         process.env.NEXT_PUBLIC_NAVER_VERIFICATION ||
-        "6281ab6d2b587071c4e48059c6491637e0b65988",
+        "593a1711b89d3ab5cc800203fc6d03a23b566d19",
     },
   },
 };
