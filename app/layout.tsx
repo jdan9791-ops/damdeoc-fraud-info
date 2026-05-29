@@ -104,6 +104,7 @@ export const metadata: Metadata = {
       "naver-site-verification":
         process.env.NEXT_PUBLIC_NAVER_VERIFICATION ||
         "593a1711b89d3ab5cc800203fc6d03a23b566d19",
+      "msvalidate.01": "865D11C5C648AF53A87F19EF35917DA1",
     },
   },
 };
