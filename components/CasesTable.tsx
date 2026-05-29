@@ -61,10 +61,15 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
   };
 
   const pageNums = useMemo(() => {
-    if (totalPages <= 10) return Array.from({ length: totalPages }, (_, i) => i + 1);
-    if (page <= 5) return Array.from({ length: 10 }, (_, i) => i + 1);
-    if (page >= totalPages - 4) return Array.from({ length: 10 }, (_, i) => totalPages - 9 + i);
-    return Array.from({ length: 10 }, (_, i) => page - 4 + i);
+    const make = (count: number) => {
+      if (totalPages <= count) return Array.from({ length: totalPages }, (_, i) => i + 1);
+      const left = Math.floor((count - 1) / 2);
+      const right = count - 1 - left;
+      if (page <= left + 1) return Array.from({ length: count }, (_, i) => i + 1);
+      if (page >= totalPages - right) return Array.from({ length: count }, (_, i) => totalPages - count + 1 + i);
+      return Array.from({ length: count }, (_, i) => page - left + i);
+    };
+    return { mobile: make(5), desktop: make(10) };
   }, [totalPages, page]);
 
   const displayTotal = totalCount ?? cases.length;
@@ -281,11 +286,25 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
                   >
                     ‹
                   </button>
-                  {pageNums.map((p) => (
+                  {pageNums.mobile.map((p) => (
                     <button
-                      key={p}
+                      key={`m-${p}`}
                       onClick={() => setPage(p)}
-                      className={`w-7 h-7 text-xs font-mono rounded-md transition-colors ${
+                      className={`sm:hidden w-7 h-7 text-xs font-mono rounded-md transition-colors ${
+                        page === p
+                          ? "bg-[#800020] text-white"
+                          : "text-gray-600 hover:bg-white border border-gray-200"
+                      }`}
+                      aria-current={page === p ? "page" : undefined}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                  {pageNums.desktop.map((p) => (
+                    <button
+                      key={`d-${p}`}
+                      onClick={() => setPage(p)}
+                      className={`hidden sm:inline-flex items-center justify-center w-7 h-7 text-xs font-mono rounded-md transition-colors ${
                         page === p
                           ? "bg-[#800020] text-white"
                           : "text-gray-600 hover:bg-white border border-gray-200"
