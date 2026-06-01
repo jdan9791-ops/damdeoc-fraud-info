@@ -152,22 +152,25 @@ export default async function FraudDetailPage({
   // 슬라이더에는 번호 이미지(1.jpg, 2.jpg ...)만 표시 — 썸네일은 목록/OG용으로만 사용
   const allImages: string[] = caseData.image_urls ?? [];
 
-  // 이미지별 SEO alt 텍스트 — 사건 키워드 조합으로 구글 이미지 검색 노출 강화
-  const _caseKeywords = (caseData.keywords ?? []).slice(0, 6);
-  const _altSuffixes = [
-    "피해 증거",
-    "출금차단 스크린샷",
-    "피해 사례",
-    "사기 수법 증거",
-    "관련 자료",
-    "피해 화면",
-    "사기 증거 자료",
-  ];
-  const imageAlts = allImages.map((_, i) => {
-    const kwStr = _caseKeywords.join(" ");
-    const suffix = _altSuffixes[i % _altSuffixes.length];
-    return `${kwStr} ${suffix} 담덕법률사무소`.trim();
-  });
+  // 이미지 alt — 자연스러운 문장: "이 사진은 담덕법률사무소에서 캡쳐해둔 {한글명}({영문명}) 웹사이트 캡쳐 사진이며 URL은 {도메인} 입니다."
+  const _stopKo = new Set([
+    "사기", "피해", "출금", "스크린샷", "먹튀", "사이트", "주식", "리딩방", "투자",
+    "거래소", "코인", "가상자산", "가짜", "암호화폐", "제보", "경고", "주의", "경보",
+    "사례", "데이터베이스", "위조", "탐지", "예방", "방어", "차단", "경계", "보호",
+    "확인", "점검", "검토", "발견", "추적", "포착",
+  ]);
+  const _altSearchText = `${caseData.title} ${caseData.body}`;
+  const _enMatch = _altSearchText.match(/\b[A-Z][A-Za-z0-9_]+(?:[\s.-]+[A-Z][A-Za-z0-9_]+)?\b/);
+  const _en = _enMatch ? _enMatch[0].trim() : "";
+  const _koMatches = caseData.title.match(/[가-힣]{2,}/g) || [];
+  const _ko = _koMatches.find((k) => !_stopKo.has(k)) || "";
+  const _domMatch = _altSearchText.match(/([A-Za-z0-9][\w-]*)\s*\.\s*(com|net|org|co\.kr|kr|io|app|info|biz|cc|me|xyz|pro|site|store|live|shop|tech)/i);
+  const _domain = _domMatch ? `${_domMatch[1]}.${_domMatch[2]}`.replace(/\s+/g, "").toLowerCase() : "";
+  const _nameStr = _ko && _en ? `${_ko}(${_en})` : (_en || _ko || "사건");
+  const _baseAlt = _domain
+    ? `이 사진은 담덕법률사무소에서 캡쳐해둔 ${_nameStr} 웹사이트 캡쳐 사진이며 URL은 ${_domain} 입니다.`
+    : `이 사진은 담덕법률사무소에서 캡쳐해둔 ${_nameStr} 관련 자료 사진입니다.`;
+  const imageAlts = allImages.map(() => _baseAlt);
 
   // 본문에서 #해시태그 추출 — 한글/영문/숫자/.(점)/_(언더스코어) 허용
   const bodyHashtagMatches = caseData.body.match(/#[a-zA-Z0-9가-힣._]+/g) ?? [];
