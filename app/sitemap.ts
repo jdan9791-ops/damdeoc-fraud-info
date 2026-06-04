@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (supabase) {
       const { data } = await supabase
         .from("fraud_cases")
-        .select("slug,updated_at,created_at,thumbnail_url,image_urls,title");
+        .select("slug,updated_at,created_at,thumbnail_url,image_urls,title").order("created_at", { ascending: false }).limit(5000);
       rows = (data as Row[]) ?? [];
     }
   } catch {
