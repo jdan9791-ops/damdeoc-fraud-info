@@ -19,10 +19,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const supabase = getSupabase();
     if (supabase) {
-      const { data } = await supabase
-        .from("fraud_cases")
-        .select("slug,updated_at,created_at,thumbnail_url,image_urls,title").order("created_at", { ascending: false }).limit(5000);
-      rows = (data as Row[]) ?? [];
+      for (let from = 0; ; from += 1000) {
+        const { data } = await supabase
+          .from("fraud_cases")
+          .select("slug,updated_at,created_at,thumbnail_url,image_urls,title")
+          .order("created_at", { ascending: false })
+          .range(from, from + 999);
+        if (!data || data.length === 0) break;
+        rows.push(...(data as Row[]));
+        if (data.length < 1000) break;
+      }
     }
   } catch {
     // ignore
