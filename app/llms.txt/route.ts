@@ -24,7 +24,7 @@ export async function GET() {
     const supabase = getSupabase();
     if (supabase) {
       const { data } = await supabase
-        .from("fraud_cases")
+        .from("cases")
         .select("slug,title,created_at")
         .order("created_at", { ascending: false })
         .limit(80);

@@ -74,9 +74,9 @@ export async function POST(req: NextRequest) {
     const { error: rpcErr } = await client.rpc("increment_view_count", { p_slug: slug });
     if (rpcErr) {
       // RPC 실패 시 직접 UPDATE 폴백
-      const { data: row } = await client.from("fraud_cases").select("view_count").eq("slug", slug).single();
+      const { data: row } = await client.from("cases").select("view_count").eq("slug", slug).single();
       if (row) {
-        await client.from("fraud_cases").update({ view_count: (row.view_count || 0) + 1 }).eq("slug", slug);
+        await client.from("cases").update({ view_count: (row.view_count || 0) + 1 }).eq("slug", slug);
       }
     }
   } catch (e) {

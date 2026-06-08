@@ -34,7 +34,7 @@ async function getCases(): Promise<FraudCase[]> {
   if (!supabase) return [];
   // limit 5000 — Supabase 기본 1000 한도 우회 (range 사용 시 더 큰 값 가능)
   const { data } = await supabase
-    .from("fraud_cases")
+    .from("cases")
     .select("*")
     .order("created_at", { ascending: false })
     .range(0, 4999);
@@ -45,7 +45,7 @@ async function getCaseCount(): Promise<number> {
   const supabase = getSupabase();
   if (!supabase) return 0;
   const { count } = await supabase
-    .from("fraud_cases")
+    .from("cases")
     .select("*", { count: "exact", head: true });
   return count ?? 0;
 }

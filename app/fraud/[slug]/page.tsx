@@ -20,7 +20,7 @@ async function getCase(slug: string): Promise<FraudCase | null> {
   const supabase = getSupabase();
   if (!supabase) return null;
   const { data } = await supabase
-    .from("fraud_cases")
+    .from("cases")
     .select("*")
     .eq("slug", slug)
     .single();

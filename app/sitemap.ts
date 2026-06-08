@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (supabase) {
       for (let from = 0; ; from += 1000) {
         const { data } = await supabase
-          .from("fraud_cases")
+          .from("cases")
           .select("slug,updated_at,created_at,thumbnail_url,image_urls,title")
           .order("created_at", { ascending: false })
           .range(from, from + 999);

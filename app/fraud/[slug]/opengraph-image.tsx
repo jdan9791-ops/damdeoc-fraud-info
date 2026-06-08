@@ -20,7 +20,7 @@ export default async function og({ params }: { params: { slug: string } }) {
     const supabase = getSupabase();
     if (supabase) {
       const { data } = await supabase
-        .from("fraud_cases")
+        .from("cases")
         .select("title,created_at")
         .eq("slug", slug)
         .single();
