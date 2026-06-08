@@ -68,16 +68,12 @@ export async function POST(req: NextRequest) {
   const ipHash = ipRaw ? hashIp(ipRaw) : "anon";
   const source = categorizeReferrer(body.referrer || req.headers.get("referer") || null);
 
-  // 1) 조회수 증가 — fraud_cases.view_count + 1
+  // 1) 조회수 증가 — cases.view_count + 1 (사이트2 전용 테이블)
+  //    RPC increment_view_count는 fraud_cases 고정이라 미사용, cases 직접 UPDATE
   try {
-    // Supabase RPC: increment_view_count(p_slug TEXT)
-    const { error: rpcErr } = await client.rpc("increment_view_count", { p_slug: slug });
-    if (rpcErr) {
-      // RPC 실패 시 직접 UPDATE 폴백
-      const { data: row } = await client.from("cases").select("view_count").eq("slug", slug).single();
-      if (row) {
-        await client.from("cases").update({ view_count: (row.view_count || 0) + 1 }).eq("slug", slug);
-      }
+    const { data: row } = await client.from("cases").select("view_count").eq("slug", slug).single();
+    if (row) {
+      await client.from("cases").update({ view_count: (row.view_count || 0) + 1 }).eq("slug", slug);
     }
   } catch (e) {
     // 조용히 실패 (조회수 증가 실패가 페이지 표시를 막으면 안 됨)
