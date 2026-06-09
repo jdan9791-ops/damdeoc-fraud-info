@@ -8,7 +8,7 @@
  * - 명시: 주요 AI 크롤러 (GPTBot, ClaudeBot, Google-Extended, PerplexityBot 등)
  */
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.damdeoc-lawoffice.kr";
 
   // 명시적으로 허용할 크롤러 목록 (AI / 검색엔진)
   const aiAndSearchBots = [
