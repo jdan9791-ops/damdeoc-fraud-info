@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { getSupabase } from "@/lib/supabase";
 
 export const runtime = "nodejs";
-export const revalidate = 3600;
+export const revalidate = false;
 
 export const alt = "담덕법률사무소 사기 피해 정보 센터";
 export const size = { width: 1200, height: 630 };

@@ -14,7 +14,7 @@ const DetailFaq = dynamic(() => import("@/components/DetailFaq"));
 const DetailCta = dynamic(() => import("@/components/DetailCta"));
 const ReportSection = dynamic(() => import("@/components/ReportSection"));
 
-export const revalidate = 3600;
+export const revalidate = false;
 
 async function getCase(slug: string): Promise<FraudCase | null> {
   const supabase = getSupabase();

@@ -16,7 +16,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";

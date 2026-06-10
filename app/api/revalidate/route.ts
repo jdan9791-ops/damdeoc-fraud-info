@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
   const { slug } = await req.json().catch(() => ({}));
 
-  revalidatePath("/", "layout");
+  revalidatePath("/");
   revalidatePath("/sitemap.xml");
   if (slug) revalidatePath(`/fraud/${slug}`);
 
