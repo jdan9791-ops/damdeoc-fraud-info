@@ -1,7 +1,7 @@
 ﻿import type { MetadataRoute } from "next";
 import { getSupabase } from "@/lib/supabase";
 
-export const revalidate = 86400;
+export const revalidate = false;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl =
