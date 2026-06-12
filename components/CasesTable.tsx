@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { r2img } from "@/lib/r2img";
 import { ChevronUp, ChevronDown, ChevronsUpDown, Search } from "lucide-react";
 import type { FraudCase } from "@/lib/supabase";
 
@@ -187,7 +188,7 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
                   <div className="relative w-[70px] h-[70px] shrink-0 bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
                     {c.thumbnail_url ? (
                       <Image
-                        src={c.thumbnail_url}
+                        src={r2img(c.thumbnail_url)}
                         alt={c.title}
                         width={70}
                         height={70}

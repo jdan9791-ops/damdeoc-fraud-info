@@ -37,6 +37,16 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react", "framer-motion"],
   },
 
+  // ── R2 이미지 same-origin 프록시 (workers.dev 핫링크 503 회피) ──
+  async rewrites() {
+    return [
+      {
+        source: "/r2img/:path*",
+        destination: "https://damdeoc-r2-proxy.jdan9791.workers.dev/:path*",
+      },
+    ];
+  },
+
   // ── 정적 자산 캐시 헤더 (장기 캐시) ──
   async headers() {
     return [

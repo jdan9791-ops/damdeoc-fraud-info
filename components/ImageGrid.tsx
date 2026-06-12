@@ -3,9 +3,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
-// R2 Worker는 브라우저 User-Agent로 직접 접근 — _next/image 프록시 불필요
+// workers.dev 크로스사이트 핫링크는 Cloudflare 봇챌린지 503 — same-origin /r2img 경유
 function imgProxy(url: string, _width = 828, _quality = 75): string {
-  return url;
+  if (!url) return url;
+  return url.replace("https://damdeoc-r2-proxy.jdan9791.workers.dev", "/r2img");
 }
 
 export default function ImageGrid({ images, imageAlts }: { images: string[]; imageAlts?: string[] }) {

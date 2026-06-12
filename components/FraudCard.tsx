@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { r2img } from "@/lib/r2img";
 import { Badge } from "@/components/ui/badge";
 import type { FraudCase } from "@/lib/supabase";
 
@@ -22,7 +23,7 @@ export default function FraudCard({ c }: { c: FraudCase }) {
         <div className="aspect-[16/9] bg-muted overflow-hidden relative">
           {c.thumbnail_url ? (
             <Image
-              src={c.thumbnail_url}
+              src={r2img(c.thumbnail_url)}
               alt={c.title}
               fill
               className="object-cover group-hover:scale-[1.02] transition-transform duration-500"

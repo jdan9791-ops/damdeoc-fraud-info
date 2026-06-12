@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { r2img } from "@/lib/r2img";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function ImageSlider({ images }: { images: string[] }) {
@@ -23,7 +24,7 @@ export default function ImageSlider({ images }: { images: string[] }) {
       {/* 이미지 */}
       <div className="relative w-full overflow-hidden" style={{ aspectRatio: "3/4" }}>
         <Image
-          src={images[current]}
+          src={r2img(images[current])}
           alt={`사건 사진 ${current + 1}`}
           fill
           className="object-cover transition-opacity duration-300"
