@@ -3,14 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
-/** workers.dev 직접 요청 → Next.js 이미지 최적화 프록시로 라우팅 (rate limit 우회)
- *  width는 반드시 next.config의 deviceSizes/imageSizes 중 하나여야 함
- *  deviceSizes: 640, 750, 828, 1080, 1200, 1920
- *  imageSizes: 16, 32, 48, 64, 96, 128, 256, 384
- */
-function imgProxy(url: string, width = 828, quality = 75): string {
-  if (!url) return url;
-  return `/_next/image?url=${encodeURIComponent(url)}&w=${width}&q=${quality}`;
+// R2 Worker는 브라우저 User-Agent로 직접 접근 — _next/image 프록시 불필요
+function imgProxy(url: string, _width = 828, _quality = 75): string {
+  return url;
 }
 
 export default function ImageGrid({ images, imageAlts }: { images: string[]; imageAlts?: string[] }) {

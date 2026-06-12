@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // ── 이미지 최적화 ──
   images: {
+    unoptimized: true,  // bypass _next/image — use R2 URLs directly
     remotePatterns: [
       { protocol: "https", hostname: "**.supabase.co" },
       { protocol: "https", hostname: "**.supabase.in" },
