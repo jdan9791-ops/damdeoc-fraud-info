@@ -34,6 +34,7 @@ async function getRelatedCases(
 ): Promise<
   Pick<FraudCase, "slug" | "title" | "thumbnail_url" | "created_at">[]
 > {
+  const supabase = getSupabase();
   if (!supabase) return [];
   const picks = new Map<
     string,
