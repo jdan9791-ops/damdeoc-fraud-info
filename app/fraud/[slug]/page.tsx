@@ -8,6 +8,7 @@ import ImageGrid from "@/components/ImageGrid";
 import { Phone, ChevronRight, ArrowLeft } from "lucide-react";
 import DetailHeroText from "@/components/DetailHeroText";
 import ViewTracker from "@/components/ViewTracker";
+import RelatedCases from "@/components/RelatedCases";
 
 // 첫 화면 이후 등장하는 섹션들은 lazy
 const DetailFaq = dynamic(() => import("@/components/DetailFaq"));
@@ -26,6 +27,49 @@ async function getCase(slug: string): Promise<FraudCase | null> {
     .single();
   return data;
 }
+
+async function getRelatedCases(
+  current: FraudCase,
+  limit = 30,
+): Promise<
+  Pick<FraudCase, "slug" | "title" | "thumbnail_url" | "created_at">[]
+> {
+  if (!supabase) return [];
+  const picks = new Map<
+    string,
+    Pick<FraudCase, "slug" | "title" | "thumbnail_url" | "created_at">
+  >();
+  // 1) 키워드가 겹치는 사건 (관련성 높은 순)
+  if (current.keywords && current.keywords.length > 0) {
+    try {
+      const { data } = await supabase
+        .from("cases")
+        .select("slug,title,thumbnail_url,created_at")
+        .overlaps("keywords", current.keywords)
+        .neq("slug", current.slug)
+        .limit(24);
+      data?.forEach((d) => picks.set(d.slug, d));
+    } catch {
+      /* overlaps 미지원 시 무시 — 아래 최신 사건으로 채움 */
+    }
+  }
+  // 2) 최신 사건으로 나머지 채움
+  try {
+    const { data } = await supabase
+      .from("cases")
+      .select("slug,title,thumbnail_url,created_at")
+      .neq("slug", current.slug)
+      .order("created_at", { ascending: false })
+      .limit(40);
+    data?.forEach((d) => {
+      if (!picks.has(d.slug)) picks.set(d.slug, d);
+    });
+  } catch {
+    /* ignore */
+  }
+  return Array.from(picks.values()).slice(0, limit);
+}
+
 
 export async function generateMetadata({
   params,
@@ -148,6 +192,8 @@ export default async function FraudDetailPage({
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
+
+  const relatedCases = await getRelatedCases(caseData).catch(() => []);
 
   // 슬라이더에는 번호 이미지(1.jpg, 2.jpg ...)만 표시 — 썸네일은 목록/OG용으로만 사용
   const allImages: string[] = caseData.image_urls ?? [];
@@ -431,6 +477,7 @@ export default async function FraudDetailPage({
             </div>
           </div>
         </div>
+        <RelatedCases cases={relatedCases} />
       </main>
 
       <Footer />
