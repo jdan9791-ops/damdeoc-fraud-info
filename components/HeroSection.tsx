@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from "react";
 import BlurTextHero from "@/components/BlurTextHero";
-import dynamic from "next/dynamic";
-
-// 차트는 무거운 캔버스 컴포넌트 — SSR 제외 + 첫 페인트 후 lazy 로드 (LCP 개선)
-const TradingChart = dynamic(() => import("@/components/TradingChart"), {
-  ssr: false,
-  loading: () => null,
-});
+import StaticHeroChart from "@/components/StaticHeroChart";
 
 export default function HeroSection({ caseCount }: { caseCount: number }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -28,7 +22,7 @@ export default function HeroSection({ caseCount }: { caseCount: number }) {
     <section className="relative min-h-screen flex flex-col justify-center overflow-hidden">
       {/* ─── 히어로 영역 배경 — 코인/주식 거래소 차트 ─────────────────── */}
       <div className="absolute inset-0 -z-0 pointer-events-none overflow-hidden">
-        <TradingChart opacity={0.55} speed={1100} />
+        <StaticHeroChart main="#6e0c2e" soft="#b06079" seed={2007} />
         {/* 데스크탑 — 좌→우 (왼쪽 글자, 오른쪽 글리치) */}
         <div
           className="absolute inset-0 pointer-events-none hidden lg:block"
