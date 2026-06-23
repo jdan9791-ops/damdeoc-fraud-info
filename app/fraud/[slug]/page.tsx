@@ -178,6 +178,7 @@ export default async function FraudDetailPage({
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
   const c = await getCase(slug).catch(() => null);
+  if (!c) notFound();
 
   const caseData: FraudCase = c ?? {
     id: 0,
