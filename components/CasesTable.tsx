@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { r2img } from "@/lib/r2img";
-import { ChevronUp, ChevronDown, ChevronsUpDown, Search } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronsUpDown, Search, X } from "lucide-react";
 import type { FraudCase } from "@/lib/supabase";
 
 type SortKey = "index" | "title" | "created_at" | "view_count";
@@ -109,8 +109,18 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
               value={query}
               onChange={(e) => { setQuery(e.target.value); setPage(1); }}
               placeholder="사건 제목 검색..."
-              className="w-full pl-11 pr-4 py-3 bg-white border border-white/30 rounded-full text-sm font-semibold text-black placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:border-white/60 transition-all"
+              className="w-full pl-11 pr-11 py-3 bg-white border border-white/30 rounded-full text-sm font-semibold text-black placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:border-white/60 transition-all"
             />
+            {query && (
+              <button
+                type="button"
+                aria-label="검색어 지우기"
+                onClick={() => { setQuery(""); setPage(1); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 hover:text-[#800020] transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
       </div>

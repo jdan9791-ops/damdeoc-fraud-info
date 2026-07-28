@@ -32,13 +32,20 @@ export const metadata: Metadata = {
 async function getCases(): Promise<FraudCase[]> {
   const supabase = getSupabase();
   if (!supabase) return [];
-  // limit 5000 — Supabase 기본 1000 한도 우회 (range 사용 시 더 큰 값 가능)
-  const { data } = await supabase
-    .from("cases")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .range(0, 4999);
-  return data ?? [];
+  // Supabase는 요청당 최대 1000행만 반환한다. 1000건씩 페이지네이션으로 전부 가져온다.
+  const PAGE = 1000;
+  const all: FraudCase[] = [];
+  for (let start = 0; ; start += PAGE) {
+    const { data } = await supabase
+      .from("cases")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .range(start, start + PAGE - 1);
+    if (!data || data.length === 0) break;
+    all.push(...data);
+    if (data.length < PAGE) break;
+  }
+  return all;
 }
 
 async function getCaseCount(): Promise<number> {
