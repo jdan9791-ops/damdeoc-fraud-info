@@ -385,7 +385,7 @@ export default async function FraudDetailPage({
               {/* 본문 */}
               <article className="space-y-6">
                 {bodyParagraphs.map((para, i) => (
-                  <p key={i} className="leading-[1.85] text-lg" style={{ letterSpacing: "-0.3px", color: "#000000" }}>
+                  <p key={i} className="leading-[1.85] text-lg whitespace-pre-line" style={{ letterSpacing: "-0.3px", color: "#000000" }}>
                     {para}
                   </p>
                 ))}
