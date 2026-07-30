@@ -1,7 +1,7 @@
 ﻿import type { MetadataRoute } from "next";
 import { getSupabase } from "@/lib/supabase";
 
-export const revalidate = false;
+export const revalidate = 3600; // 사이트맵 자동 갱신(slug 변경 반영) 2026-07-30
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl =

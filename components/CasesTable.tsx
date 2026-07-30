@@ -23,7 +23,7 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
-  const [pageSize, setPageSize] = useState<PageSize>(10);
+  const [pageSize, setPageSize] = useState<PageSize>(50);
 
   const filtered = useMemo(() => {
     if (!query.trim()) return cases;
