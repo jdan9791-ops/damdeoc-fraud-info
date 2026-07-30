@@ -195,7 +195,7 @@ export default async function FraudDetailPage({
   const c = await getCase(slug).catch(() => null);
   if (!c) {
     const redir = await findCurrentSlugByHash(slug).catch(() => null);
-    if (redir && redir !== slug) permanentRedirect(`/fraud/${redir}`);
+    if (redir && redir !== slug) permanentRedirect(`/fraud/${encodeURIComponent(redir)}`);
     notFound();
   }
 
