@@ -1,4 +1,4 @@
-﻿import { notFound } from "next/navigation";
+﻿import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { getSupabase, type FraudCase } from "@/lib/supabase";
@@ -26,6 +26,21 @@ async function getCase(slug: string): Promise<FraudCase | null> {
     .eq("slug", slug)
     .single();
   return data;
+}
+
+// 옛 slug(짧게 바뀌기 전) 접속 시 끝 6자리 해시로 현재 slug를 찾아 301(308) 이전
+async function findCurrentSlugByHash(slug: string): Promise<string | null> {
+  const supabase = getSupabase();
+  if (!supabase) return null;
+  const m = slug.match(/-([0-9a-f]{6})$/);
+  if (!m) return null;
+  const { data } = await supabase
+    .from("cases")
+    .select("slug")
+    .ilike("slug", `%-${m[1]}`)
+    .limit(2);
+  if (!data || data.length !== 1) return null;
+  return (data[0] as { slug: string }).slug;
 }
 
 async function getRelatedCases(
@@ -178,7 +193,11 @@ export default async function FraudDetailPage({
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
   const c = await getCase(slug).catch(() => null);
-  if (!c) notFound();
+  if (!c) {
+    const redir = await findCurrentSlugByHash(slug).catch(() => null);
+    if (redir && redir !== slug) permanentRedirect(`/fraud/${redir}`);
+    notFound();
+  }
 
   const caseData: FraudCase = c ?? {
     id: 0,
