@@ -57,15 +57,21 @@ export async function POST(req: NextRequest) {
     req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "";
   const ipHash = ipRaw ? hashIp(ipRaw) : "anon";
 
-  // 사이트 식별 — 호스트네임에서 추출 (예: damdeoc-alert.vercel.app → alert)
+  // 사이트 식별 — 실제 커스텀 도메인 우선, vercel 프리뷰 폴백. fraud_uploader sites.json id와 동일.
   const host = (req.headers.get("host") || "").toLowerCase();
-  let siteId = "main";
-  if (host.includes("damdeoc-fraud-cases")) siteId = "fraud-cases";
-  else if (host.includes("damdeoc-alert")) siteId = "alert";
-  else if (host.includes("damdeoc-guard")) siteId = "guard";
-  else if (host.includes("damdeoc-check")) siteId = "check";
-  else if (host.includes("damdeoc-radar")) siteId = "radar";
-  else if (host.includes("damdeoc-cases")) siteId = "cases";
+  let siteId = "unknown";
+  if (host.includes("damdeoc-lawoffice.co.kr")) siteId = "damdeoc-alert";
+  else if (host.includes("damdeoc-lawoffice.net")) siteId = "damdeoc-guard";
+  else if (host.includes("damdeoc-lawoffice.org")) siteId = "damdeoc-check";
+  else if (host.includes("damdeoc-lawoffice.biz")) siteId = "damdeoc-radar";
+  else if (host.includes("damdeoc-lawoffice.kr")) siteId = "damdeoc2";
+  else if (host.includes("damdeoc-lawoffice.com")) siteId = "damdeoc";
+  else if (host.includes("damdeoc-alert")) siteId = "damdeoc-alert";
+  else if (host.includes("damdeoc-guard")) siteId = "damdeoc-guard";
+  else if (host.includes("damdeoc-check")) siteId = "damdeoc-check";
+  else if (host.includes("damdeoc-radar")) siteId = "damdeoc-radar";
+  else if (host.includes("damdeoc-fraud-cases")) siteId = "damdeoc";
+  else if (host.includes("damdeoc-cases")) siteId = "damdeoc2";
 
   try {
     await client.from("page_views").insert({
