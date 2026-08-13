@@ -36,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const casePaths: MetadataRoute.Sitemap = rows.map((r) => ({
     url: `${baseUrl}/fraud/${r.slug}`,
-    lastModified: new Date(r.updated_at || r.created_at),
+    lastModified: new Date(r.created_at),
     changeFrequency: "weekly",
     priority: 0.8,
     // Image sitemap 확장

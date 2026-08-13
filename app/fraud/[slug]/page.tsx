@@ -216,8 +216,11 @@ export default async function FraudDetailPage({
 
   const relatedCases = await getRelatedCases(caseData).catch(() => []);
 
-  // 슬라이더에는 번호 이미지(1.jpg, 2.jpg ...)만 표시 — 썸네일은 목록/OG용으로만 사용
-  const allImages: string[] = caseData.image_urls ?? [];
+  // 브랜드 썸네일을 슬라이더 '첫 장'으로 → 구글 검색결과 우측 대표 썸네일 유도(공홈처럼)
+  const _slides: string[] = caseData.image_urls ?? [];
+  const allImages: string[] = caseData.thumbnail_url
+    ? [caseData.thumbnail_url, ..._slides.filter((u) => u !== caseData.thumbnail_url)]
+    : _slides;
 
   // 이미지 alt — 자연스러운 문장: "이 사진은 담덕법률사무소에서 캡쳐해둔 {한글명}({영문명}) 웹사이트 캡쳐 사진이며 URL은 {도메인} 입니다."
   const _stopKo = new Set([
@@ -237,7 +240,11 @@ export default async function FraudDetailPage({
   const _baseAlt = _domain
     ? `이 사진은 담덕법률사무소에서 캡쳐해둔 ${_nameStr} 웹사이트 캡쳐 사진이며 URL은 ${_domain} 입니다.`
     : `이 사진은 담덕법률사무소에서 캡쳐해둔 ${_nameStr} 관련 자료 사진입니다.`;
-  const imageAlts = allImages.map(() => _baseAlt);
+  const imageAlts = allImages.map((u, i) =>
+    caseData.thumbnail_url && i === 0 && u === caseData.thumbnail_url
+      ? `${_nameStr} 사기 피해 정보 · 담덕법률사무소`
+      : _baseAlt,
+  );
 
   // 본문에서 #해시태그 추출 — 한글/영문/숫자/.(점)/_(언더스코어) 허용
   const bodyHashtagMatches = caseData.body.match(/#[a-zA-Z0-9가-힣._]+/g) ?? [];
@@ -330,11 +337,31 @@ export default async function FraudDetailPage({
         }))
       : [];
 
+  // ItemList — 관련 사건(연관 사건 사이트링크/썸네일 carousel 유도)
+  const relatedItemListJsonLd =
+    relatedCases.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: `${caseData.title} 관련 사기 사건`,
+          itemListElement: relatedCases.slice(0, 10).map((r, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            url: `${SITE_URL}/fraud/${encodeURIComponent(r.slug)}`,
+            name: r.title,
+            ...(r.thumbnail_url ? { image: r.thumbnail_url } : {}),
+          })),
+        }
+      : null;
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      {relatedItemListJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(relatedItemListJsonLd) }} />
+      )}
       {imageObjectsJsonLd.map((obj, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }} />
       ))}
