@@ -2,6 +2,8 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { getSupabase, type FraudCase } from "@/lib/supabase";
+import { r2img } from "@/lib/r2img";
+const absR2 = (u: string | null | undefined, site: string): string => { if (!u) return ""; const p = r2img(u); return p.startsWith("/") ? `${site}${p}` : p; };
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ImageGrid from "@/components/ImageGrid";
@@ -123,7 +125,7 @@ export async function generateMetadata({
       .join(" ")
       .slice(0, 200);
 
-  const image = c.thumbnail_url || `${SITE_URL}/og-image.png`;
+  const image = absR2(c.thumbnail_url, SITE_URL) || `${SITE_URL}/og-image.png`;
 
   const titleKeywords = (c.title || "")
     .split(/[\s,，、\-:|]+/)
@@ -285,7 +287,7 @@ export default async function FraudDetailPage({
     headline: caseData.title,
     alternativeHeadline: caseData.meta_title || undefined,
     description: caseData.meta_description || summary,
-    image: caseData.thumbnail_url ? [caseData.thumbnail_url] : [`${SITE_URL}/icon.png`],
+    image: caseData.thumbnail_url ? [absR2(caseData.thumbnail_url, SITE_URL)] : [`${SITE_URL}/icon.png`],
     datePublished: caseData.created_at,
     dateModified: caseData.updated_at,
     author: {
@@ -349,7 +351,7 @@ export default async function FraudDetailPage({
             position: i + 1,
             url: `${SITE_URL}/fraud/${encodeURIComponent(r.slug)}`,
             name: r.title,
-            ...(r.thumbnail_url ? { image: r.thumbnail_url } : {}),
+            ...(r.thumbnail_url ? { image: absR2(r.thumbnail_url, SITE_URL) } : {}),
           })),
         }
       : null;
