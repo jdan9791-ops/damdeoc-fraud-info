@@ -351,7 +351,7 @@ export default async function FraudDetailPage({
             position: i + 1,
             url: `${SITE_URL}/fraud/${encodeURIComponent(r.slug)}`,
             name: r.title,
-            ...(r.thumbnail_url ? { image: absR2(r.thumbnail_url, SITE_URL) } : {}),
+            ...(r.thumbnail_url ? { image: r.thumbnail_url } : {}),
           })),
         }
       : null;
