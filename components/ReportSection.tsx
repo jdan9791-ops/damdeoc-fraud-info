@@ -211,7 +211,7 @@ export default function ReportSection() {
 
             {/* 사진 첨부 */}
             <div>
-              <label className="flex items-center gap-2 text-sm md:text-[15px] font-semibold mb-2" style={{ color: "#edff00" }}>
+              <label className="flex items-center gap-2 text-base md:text-[17px] font-semibold mb-2" style={{ color: "#ffffff" }}>
                 <span
                   className="w-2 h-2 rounded-full shrink-0"
                   style={{ backgroundColor: "#edff00" }}
@@ -417,7 +417,7 @@ export default function ReportSection() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="flex items-center gap-2 text-sm md:text-[15px] font-semibold mb-2" style={{ color: "#edff00" }}>
+      <span className="flex items-center gap-2 text-base md:text-[17px] font-semibold mb-2" style={{ color: "#ffffff" }}>
         <span
           className="w-2 h-2 rounded-full shrink-0"
           style={{ backgroundColor: "#edff00" }}
