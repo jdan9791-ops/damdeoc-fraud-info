@@ -20,10 +20,7 @@ export default function FloatingCTA() {
 
   useEffect(() => {
     try {
-      if (sessionStorage.getItem("cta_closed") === "1") {
-        setClosed(true);
-        return;
-      }
+      // '오늘 하루 안 보기'만 저장(그날 하루 숨김). ×(close)는 메모리에서만 닫아 새로고침 시 다시 뜸.
       if (localStorage.getItem("cta_hide_date") === todayKey()) {
         setClosed(true);
         return;
@@ -41,11 +38,9 @@ export default function FloatingCTA() {
   if (closed) return null;
 
   const close = () => {
+    // 메모리에서만 닫음 → 새로고침하면 다시 뜸
     setShow(false);
     setTimeout(() => setClosed(true), 400);
-    try {
-      sessionStorage.setItem("cta_closed", "1");
-    } catch {}
   };
   const hideToday = () => {
     try {
