@@ -16,6 +16,7 @@ import RelatedCases from "@/components/RelatedCases";
 const DetailFaq = dynamic(() => import("@/components/DetailFaq"));
 const DetailCta = dynamic(() => import("@/components/DetailCta"));
 const ReportSection = dynamic(() => import("@/components/ReportSection"));
+const FloatingCTA = dynamic(() => import("@/components/FloatingCTA"));
 
 export const revalidate = false;
 
@@ -486,6 +487,9 @@ export default async function FraudDetailPage({
                 <ReportSection />
               </div>
             </div>
+
+            {/* 스크롤 시 등장하는 플로팅 문의 CTA (전화/온라인) */}
+            <FloatingCTA />
 
             {/* ── RIGHT — 이미지 슬라이더 + 사이드 CTA (PC sticky) */}
             <div className="hidden lg:flex flex-col gap-8 w-[40%] sticky top-28">
