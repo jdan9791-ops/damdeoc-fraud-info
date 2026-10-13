@@ -52,7 +52,7 @@ async function findCurrentSlugByHash(slug: string): Promise<string | null> {
   return (data[0] as { slug: string }).slug;
 }
 
-// 「관련 사건」을 채우는 최신 사건 목록 — 모든 사건 페이지가 같은 내용(1번 열릴 때 약 15KB)이라
+// 「관련 사건」을 채우는 최신 사건 목록 — 모든 사건 페이지가 같은 내용이라
 // 서버 메모리에 10분 기억한다 (2026-10-13 Supabase 전송량). Next.js 캐시(ISR·데이터 캐시)는 쓰지 않는다 —
 // ISR 로 바꿨을 때 Vercel 에서 한글 주소 사건 페이지가 500 이었다. 10분: 지운 글 제목이 다른 페이지 관련 목록에 오래 남지 않게.
 type RecentRow = Pick<FraudCase, "slug" | "title" | "thumbnail_url" | "created_at">;
@@ -66,7 +66,7 @@ async function getRecentCases(client: SupabaseClient | null): Promise<RecentRow[
     .from("cases")
     .select("slug,title,thumbnail_url,created_at")
     .order("created_at", { ascending: false })
-    .limit(41);
+    .limit(7);
   if (error || !data) return recentMemo?.rows ?? [];
   recentMemo = { at: Date.now(), rows: data as RecentRow[] };
   return recentMemo.rows;
@@ -74,7 +74,7 @@ async function getRecentCases(client: SupabaseClient | null): Promise<RecentRow[
 
 async function getRelatedCases(
   current: FraudCase,
-  limit = 30,
+  limit = 6,   // 관련 사건 6개 (2026-10-13 이실장 — 전엔 30개라 페이지 주제가 흐려졌다)
 ): Promise<
   Pick<FraudCase, "slug" | "title" | "thumbnail_url" | "created_at">[]
 > {
@@ -92,7 +92,7 @@ async function getRelatedCases(
         .select("slug,title,thumbnail_url,created_at")
         .overlaps("keywords", current.keywords)
         .neq("slug", current.slug)
-        .limit(24);
+        .limit(6);
       data?.forEach((d) => picks.set(d.slug, d));
     } catch {
       /* overlaps 미지원 시 무시 — 아래 최신 사건으로 채움 */
@@ -361,31 +361,13 @@ export default async function FraudDetailPage({
         }))
       : [];
 
-  // ItemList — 관련 사건(연관 사건 사이트링크/썸네일 carousel 유도)
-  const relatedItemListJsonLd =
-    relatedCases.length > 0
-      ? {
-          "@context": "https://schema.org",
-          "@type": "ItemList",
-          name: `${caseData.title} 관련 사기 사건`,
-          itemListElement: relatedCases.slice(0, 10).map((r, i) => ({
-            "@type": "ListItem",
-            position: i + 1,
-            url: `${SITE_URL}/fraud/${encodeURIComponent(r.slug)}`,
-            name: r.title,
-            ...(r.thumbnail_url ? { image: r.thumbnail_url } : {}),
-          })),
-        }
-      : null;
+  // (관련 사건 썸네일 ItemList 는 뺐다 — 네이버가 우리 결과에 다른 사건 썸네일을 붙여 목록처럼 보였다, 2026-10-13)
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
-      {relatedItemListJsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(relatedItemListJsonLd) }} />
-      )}
       {imageObjectsJsonLd.map((obj, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }} />
       ))}

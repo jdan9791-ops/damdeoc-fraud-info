@@ -17,7 +17,8 @@ export default function DetailHeroText() {
   }, [])
 
   return (
-    <h1 className="font-display tracking-tight leading-[1.1] text-3xl md:text-4xl lg:text-5xl flex items-baseline flex-wrap justify-center gap-x-3 text-center">
+    // 큰 제목(H1)은 사건 제목 하나만 — 이 문구는 모양만 같고 제목이 아니다 (2026-10-13 네이버 노출)
+    <p className="font-display tracking-tight leading-[1.1] text-3xl md:text-4xl lg:text-5xl flex items-baseline flex-wrap justify-center gap-x-3 text-center">
       <span className="text-muted-foreground">현재 피해를 입었다면 지금</span>
 
       {/* 회전 단어 */}
@@ -36,6 +37,6 @@ export default function DetailHeroText() {
           </motion.span>
         </AnimatePresence>
       </span>
-    </h1>
+    </p>
   )
 }
