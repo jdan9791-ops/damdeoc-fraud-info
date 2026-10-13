@@ -1,4 +1,6 @@
 ﻿import { notFound, permanentRedirect } from "next/navigation";
+import { cache } from "react";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { getSupabase, type FraudCase } from "@/lib/supabase";
@@ -22,7 +24,7 @@ const FloatingCTA = dynamic(() => import("@/components/FloatingCTA"));
 //   (영문 주소는 정상. 다시 시도하려면 한글 slug 처리부터 확인할 것)
 export const revalidate = false;
 
-async function getCase(slug: string): Promise<FraudCase | null> {
+async function getCaseUncached(slug: string): Promise<FraudCase | null> {
   const supabase = getSupabase();
   if (!supabase) return null;
   const { data } = await supabase
@@ -32,6 +34,8 @@ async function getCase(slug: string): Promise<FraudCase | null> {
     .single();
   return data;
 }
+// generateMetadata 와 페이지가 각각 부르던 것을 한 요청 안에서 한 번만 읽는다 (2026-10-13 Supabase 전송량)
+const getCase = cache(getCaseUncached);
 
 // 옛 slug(짧게 바뀌기 전) 접속 시 끝 6자리 해시로 현재 slug를 찾아 301(308) 이전
 async function findCurrentSlugByHash(slug: string): Promise<string | null> {
@@ -46,6 +50,26 @@ async function findCurrentSlugByHash(slug: string): Promise<string | null> {
     .limit(2);
   if (!data || data.length !== 1) return null;
   return (data[0] as { slug: string }).slug;
+}
+
+// 「관련 사건」을 채우는 최신 사건 목록 — 모든 사건 페이지가 같은 내용(1번 열릴 때 약 15KB)이라
+// 서버 메모리에 10분 기억한다 (2026-10-13 Supabase 전송량). Next.js 캐시(ISR·데이터 캐시)는 쓰지 않는다 —
+// ISR 로 바꿨을 때 Vercel 에서 한글 주소 사건 페이지가 500 이었다. 10분: 지운 글 제목이 다른 페이지 관련 목록에 오래 남지 않게.
+type RecentRow = Pick<FraudCase, "slug" | "title" | "thumbnail_url" | "created_at">;
+let recentMemo: { at: number; rows: RecentRow[] } | null = null;
+const RECENT_TTL_MS = 10 * 60 * 1000;
+
+async function getRecentCases(client: SupabaseClient | null): Promise<RecentRow[]> {
+  if (recentMemo && Date.now() - recentMemo.at < RECENT_TTL_MS) return recentMemo.rows;
+  if (!client) return [];
+  const { data, error } = await client
+    .from("cases")
+    .select("slug,title,thumbnail_url,created_at")
+    .order("created_at", { ascending: false })
+    .limit(41);
+  if (error || !data) return recentMemo?.rows ?? [];
+  recentMemo = { at: Date.now(), rows: data as RecentRow[] };
+  return recentMemo.rows;
 }
 
 async function getRelatedCases(
@@ -74,16 +98,11 @@ async function getRelatedCases(
       /* overlaps 미지원 시 무시 — 아래 최신 사건으로 채움 */
     }
   }
-  // 2) 최신 사건으로 나머지 채움
+  // 2) 최신 사건으로 나머지 채움 — 모든 사건 페이지가 같은 목록이라 서버 메모리에 10분 기억해 두고 쓴다 (2026-10-13)
   try {
-    const { data } = await supabase
-      .from("cases")
-      .select("slug,title,thumbnail_url,created_at")
-      .neq("slug", current.slug)
-      .order("created_at", { ascending: false })
-      .limit(40);
-    data?.forEach((d) => {
-      if (!picks.has(d.slug)) picks.set(d.slug, d);
+    const recent = await getRecentCases(supabase);
+    recent.forEach((d) => {
+      if (d.slug !== current.slug && !picks.has(d.slug)) picks.set(d.slug, d);
     });
   } catch {
     /* ignore */
