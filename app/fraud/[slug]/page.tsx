@@ -18,13 +18,9 @@ const DetailCta = dynamic(() => import("@/components/DetailCta"));
 const ReportSection = dynamic(() => import("@/components/ReportSection"));
 const FloatingCTA = dynamic(() => import("@/components/FloatingCTA"));
 
-// 사건 페이지는 처음 열릴 때 만들어 저장해 두고(ISR) 하루에 한 번만 다시 만든다 (2026-10-13 Supabase 전송량)
-// — 전엔 generateStaticParams 가 없어 열릴 때마다(검색 로봇 포함) Supabase 를 다시 읽었다.
-// 글을 올리거나 지우면 /api/revalidate 가 그 주소를 바로 갱신한다.
-export const revalidate = 86400;
-export async function generateStaticParams() {
-  return [];
-}
+// ⚠ 2026-10-13: generateStaticParams(빈 배열)로 ISR 을 켰더니 Vercel 에서 한글이 든 주소의 사건 페이지가 전부 500 → 되돌림.
+//   (영문 주소는 정상. 다시 시도하려면 한글 slug 처리부터 확인할 것)
+export const revalidate = false;
 
 async function getCase(slug: string): Promise<FraudCase | null> {
   const supabase = getSupabase();
