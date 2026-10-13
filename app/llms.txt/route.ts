@@ -1,8 +1,8 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 
 export const runtime = "nodejs";
-export const revalidate = 3600;
+export const revalidate = 86400; // 하루 (2026-10-13 Supabase 전송량 절약, 전엔 1시간)
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";
@@ -93,9 +93,9 @@ export async function GET() {
 ## 주요 콘텐츠
 
 - 사기 사건 사례: ${SITE_URL}/#cases (${caseCount}+건)
-- 사기 유형 가이드: ${SITE_URL}/#fraud-types
-- 자주 묻는 질문 (FAQ): ${SITE_URL}/#faq
-- 피해 접수 폼: ${SITE_URL}/#report
+- 사기 유형 가이드: ${SITE_URL}/fraud-types
+- 자주 묻는 질문 (FAQ): ${SITE_URL}/faq
+- 피해 접수 폼: ${SITE_URL}/report
 - RSS 피드: ${SITE_URL}/rss.xml
 - 사이트맵: ${SITE_URL}/sitemap.xml
 - 개인정보처리방침: ${SITE_URL}/privacy

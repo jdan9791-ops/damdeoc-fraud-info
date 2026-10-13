@@ -1,16 +1,26 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { r2img } from "@/lib/r2img";
+import { r2img, listThumb } from "@/lib/r2img";
 import { Search, X } from "lucide-react";
-import type { FraudCase } from "@/lib/supabase";
+import type { ListCase } from "@/lib/supabase";
 
 const PAGE_SIZE = 10; // 기본 10개 고정(선택 토글 없음)
 
-export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; totalCount?: number }) {
+export default function CasesTable({ cases, totalCount }: { cases: ListCase[]; totalCount?: number }) {
   const [page, setPage] = useState(1);
+  // 목록용 작은 썸네일이 아직 없는 사건 — 원본 썸네일로 (2026-10-13)
+  const [noSmall, setNoSmall] = useState<Set<number>>(() => new Set());
+  // 화면이 준비되기 전에 이미 실패한 이미지는 onError 가 불리지 않는다 → 준비된 뒤 한 번 훑어 원본으로
+  useEffect(() => {
+    const bad: number[] = [];
+    document.querySelectorAll<HTMLImageElement>("img[data-cid]").forEach((im) => {
+      if (im.complete && im.naturalWidth === 0) bad.push(Number(im.dataset.cid));
+    });
+    if (bad.length) setNoSmall((s) => { const n = new Set(s); bad.forEach((b) => n.add(b)); return n; });
+  }, []);
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -46,7 +56,7 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
           <p className="label-editorial mb-2" style={{ color: "rgba(255,255,255,0.6)" }}>
             FRAUD CASES
           </p>
-          <h2
+          <h1
             className="text-3xl md:text-4xl leading-tight"
             style={{
               color: "#fff",
@@ -56,7 +66,7 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
             }}
           >
             최신 사기 사건 목록
-          </h2>
+          </h1>
         </div>
 
         <div className="flex flex-col items-stretch md:items-end gap-2 w-full md:w-auto md:max-w-md md:min-w-[360px]">
@@ -133,7 +143,9 @@ export default function CasesTable({ cases, totalCount }: { cases: FraudCase[]; 
                 <div className="relative w-[70px] h-[70px] shrink-0 bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
                   {c.thumbnail_url ? (
                     <Image
-                      src={r2img(c.thumbnail_url)}
+                      src={noSmall.has(c.id) ? r2img(c.thumbnail_url) : listThumb(c.thumbnail_url)}
+                      onError={() => setNoSmall((s) => (s.has(c.id) ? s : new Set(s).add(c.id)))}
+                      data-cid={c.id}
                       alt={c.title}
                       width={70}
                       height={70}

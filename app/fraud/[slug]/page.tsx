@@ -18,7 +18,13 @@ const DetailCta = dynamic(() => import("@/components/DetailCta"));
 const ReportSection = dynamic(() => import("@/components/ReportSection"));
 const FloatingCTA = dynamic(() => import("@/components/FloatingCTA"));
 
-export const revalidate = false;
+// 사건 페이지는 처음 열릴 때 만들어 저장해 두고(ISR) 하루에 한 번만 다시 만든다 (2026-10-13 Supabase 전송량)
+// — 전엔 generateStaticParams 가 없어 열릴 때마다(검색 로봇 포함) Supabase 를 다시 읽었다.
+// 글을 올리거나 지우면 /api/revalidate 가 그 주소를 바로 갱신한다.
+export const revalidate = 86400;
+export async function generateStaticParams() {
+  return [];
+}
 
 async function getCase(slug: string): Promise<FraudCase | null> {
   const supabase = getSupabase();

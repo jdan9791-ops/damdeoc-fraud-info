@@ -1,8 +1,8 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 
 export const runtime = "nodejs";
-export const revalidate = 3600;
+export const revalidate = 21600; // 6시간 (2026-10-13 Supabase 전송량 절약, 전엔 1시간)
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://damdeoc-lawoffice.kr";

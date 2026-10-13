@@ -40,3 +40,6 @@ export type FraudCase = {
   created_at: string;
   updated_at: string;
 };
+
+/** 메인 목록에 쓰는 칸만 (2026-10-13 — 메인이 사건 전체 칸을 받던 것을 줄임) */
+export type ListCase = Pick<FraudCase, "id" | "slug" | "title" | "thumbnail_url">;

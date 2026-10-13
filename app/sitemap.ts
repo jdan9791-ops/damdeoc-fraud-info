@@ -1,7 +1,7 @@
-﻿import type { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 import { getSupabase } from "@/lib/supabase";
 
-export const revalidate = 3600; // 사이트맵 자동 갱신(slug 변경 반영) 2026-07-30
+export const revalidate = 86400; // 하루 — 글 올릴 때마다 /api/revalidate 가 바로 갱신한다 (2026-10-13 Supabase 전송량 절약, 전엔 1시간)
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl =
@@ -58,6 +58,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/report`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/fraud-types`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/faq`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
     },
     {
       url: `${baseUrl}/privacy`,

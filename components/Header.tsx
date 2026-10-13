@@ -6,10 +6,10 @@ import { Menu, X, Phone } from "lucide-react";
 
 const navLinks = [
   { name: "최신 사기 사건", href: "/#cases" },
-  { name: "사기사건 제보", href: "/#report" },
-  { name: "사기 유형", href: "/#fraud-types" },
+  { name: "사기사건 제보", href: "/report" },
+  { name: "사기 유형", href: "/fraud-types" },
   { name: "변호사 소개", href: "/lawyer" },
-  { name: "FAQ", href: "/#faq" },
+  { name: "FAQ", href: "/faq" },
 ];
 
 export default function Header() {
@@ -49,12 +49,12 @@ export default function Header() {
           </Link>
 
           {/* 데스크탑 네비 — 호버 시 버건디 pill */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="text-sm text-foreground/70 px-4 py-2 rounded-full hover:text-white"
+                className="text-[17px] font-bold whitespace-nowrap text-foreground/70 px-4 py-2 rounded-full hover:text-white"
                 style={{
                   // 트랜지션 0 — 즉시 색상 변경
                   transition: "none",
@@ -78,7 +78,7 @@ export default function Header() {
           </div>
 
           {/* 데스크탑 CTA */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-4 ml-auto mr-2 lg:ml-0 lg:mr-0">
             <a
               href="tel:010-2263-9674"
               className="flex items-center text-white rounded-full px-6 h-12"
@@ -99,7 +99,7 @@ export default function Header() {
           {/* 모바일 메뉴 버튼 */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2"
+            className="lg:hidden p-2"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -109,7 +109,7 @@ export default function Header() {
 
       {/* 모바일 풀스크린 메뉴 */}
       <div
-        className={`md:hidden fixed inset-0 bg-background z-[60] transition-all duration-500 ${
+        className={`lg:hidden fixed inset-0 bg-background z-[60] transition-all duration-500 ${
           isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       >
